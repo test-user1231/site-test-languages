@@ -4,14 +4,24 @@ from selenium import webdriver
 
 def pytest_addoption(parser):
     parser.addoption('--language', action='store', default=None, help="enter language")
+    parser.addoption('--browser', action='store', default=None, help="select browser")
 
 
 @pytest.fixture(scope="function")
-def browser():
-    print("\nStarting firefox...")
-    browser = webdriver.Firefox()
+def browser(request):
+    browser_name = request.config.getoption("browser")
+    browser = None
+    if browser_name == "firefox":
+        print("starting firefox...")
+        browser = webdriver.Firefox()
+    elif browser_name == "chrome":
+        print("starting chrome...")
+        browser = webdriver.Chrome()
+    else:
+        print("not found name for browser")
+
     yield browser
-    print("\n closing browser...")
+    print("closing browser ")
     browser.quit()
 
 
